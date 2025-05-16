@@ -1,0 +1,42 @@
+{
+  "properties": [
+    {
+      "name": "multitenancy.datasources",
+      "type": "java.util.Map<java.lang.String, com.xenotech.multitenant.datasource.autoconfigure.TenantProperties$TenantConfig>",
+      "description": "Map of tenant datasource configurations."
+    },
+    {
+      "name": "multitenancy.datasources.*.url",
+      "type": "java.lang.String",
+      "description": "JDBC URL for the tenant datasource."
+    },
+    {
+      "name": "multitenancy.datasources.*.username",
+      "type": "java.lang.String",
+      "description": "Username for the tenant datasource."
+    },
+    {
+      "name": "multitenancy.datasources.*.password",
+      "type": "java.lang.String",
+      "description": "Password for the tenant datasource."
+    },
+    {
+      "name": "multitenancy.datasources.*.driver-class-name",
+      "type": "java.lang.String",
+      "description": "JDBC driver class name.",
+      "defaultValue": "org.mariadb.jdbc.Driver"
+    },
+    {
+      "name": "multitenancy.datasources.*.maximum-pool-size",
+      "type": "java.lang.Integer",
+      "description": "Maximum connection pool size.",
+      "defaultValue": "30"
+    },
+    {
+      "name": "multitenancy.datasources.*.minimum-idle",
+      "type": "java.lang.Integer",
+      "description": "Minimum idle connections in the pool.",
+      "defaultValue": "5"
+    }
+  ]
+}
