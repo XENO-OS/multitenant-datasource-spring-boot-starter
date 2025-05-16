@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -28,6 +29,7 @@ public class MultitenantDatasourceAutoConfiguration implements WebMvcConfigurer 
     }
 
     @Bean
+    @Primary
     @ConditionalOnMissingBean
     public TenantRoutingDataSource tenantRoutingDataSource(TenantDataSourceProvider provider) {
         TenantRoutingDataSource routingDataSource = new TenantRoutingDataSource();
