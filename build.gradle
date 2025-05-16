@@ -65,7 +65,13 @@ sourceSets {
 java {
     withSourcesJar()
 }
+bootJar {
+    enabled = false
+}
 
+jar {
+    enabled = true
+}
 publishing {
     publications {
         mavenJava(MavenPublication) {
