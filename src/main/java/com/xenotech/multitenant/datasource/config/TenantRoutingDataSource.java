@@ -2,6 +2,7 @@ package com.xenotech.multitenant.datasource.config;
 
 import com.xenotech.multitenant.datasource.context.TenantContext;
 import com.xenotech.multitenant.datasource.exception.TenantNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
 import javax.sql.DataSource;
@@ -14,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * This class determines which data source should be used based on the tenant identifier
  * stored in the TenantContext.
  */
+@Slf4j
 public class TenantRoutingDataSource extends AbstractRoutingDataSource {
     private final Map<Object, Object> targetDataSources = new ConcurrentHashMap<>();
 
@@ -21,6 +23,7 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
     public void afterPropertiesSet() {
         // Set the resolved target data sources for the AbstractRoutingDataSource
         super.setTargetDataSources(this.targetDataSources);
+        log.debug("Initializing with datasources: {}", this.targetDataSources.keySet());
         super.afterPropertiesSet();
     }
 

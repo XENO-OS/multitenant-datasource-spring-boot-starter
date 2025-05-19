@@ -17,7 +17,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
  */
 @Component
 @RequiredArgsConstructor
-public class TenantInterceptor  implements HandlerInterceptor {
+    public class TenantInterceptor  implements HandlerInterceptor {
     public static final String TENANT_HEADER = "X-Tenant-ID";
     /**
      * Pre-handle method to extract the tenant ID from the request header and set it in the TenantContext.

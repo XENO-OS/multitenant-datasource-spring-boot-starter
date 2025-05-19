@@ -11,15 +11,16 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
 
 @AutoConfiguration(after = DataSourceAutoConfiguration.class)
-@ConditionalOnClass(DataSource.class)
+@ConditionalOnClass({DataSource.class, AbstractRoutingDataSource.class})
 @EnableConfigurationProperties(TenantProperties.class)
-@Import({TenantDataSourceProvider.class, TenantRoutingDataSource.class})
+@Import({TenantDataSourceProvider.class})
 public class MultitenantDatasourceAutoConfiguration implements WebMvcConfigurer {
 
     @Bean
