@@ -48,17 +48,7 @@ multitenancy:
       driver-class-name: com.mysql.cj.jdbc.Driver
       minimum-idle: 3
 ```
-2. Add the `@EnableMultitenantDatasource` annotation to your main class:
 
-```java
-@SpringBootApplication
-@EnableMultitenantDatasource
-public class MyApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(MyApplication.class, args);
-    }
-}
-```
 ## Usage
 #### Automatic Tenant Resolution
 The library automatically detects tenants from the X-Tenant-ID header:
