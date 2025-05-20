@@ -4,8 +4,7 @@ import com.xenotech.multitenant.datasource.exception.TenantNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TenantContextTest {
     @AfterEach
@@ -25,12 +24,15 @@ class TenantContextTest {
         assertEquals(tenantId, TenantContext.getCurrentTenant());
     }
     @Test
-    void shouldThrowExceptionWhenNoTenantSet() {
+    void shouldReturnNullWhenNoTenantSet() {
         // Arrange - clear any existing tenant
         TenantContext.clear();
 
-        // Act & Assert
-        assertThrows(TenantNotFoundException.class, TenantContext::getCurrentTenant);
+        // Act
+        String tenant = TenantContext.getCurrentTenant();
+
+        // Assert
+        assertNull(tenant, "Expected current tenant to be null when no tenant is set");
     }
     @Test
     void shouldClearCurrentTenant() {
@@ -41,6 +43,6 @@ class TenantContextTest {
         TenantContext.clear();
 
         // Assert
-        assertThrows(TenantNotFoundException.class, TenantContext::getCurrentTenant);
+        assertNull(TenantContext.getCurrentTenant(), "Expected current tenant to be null after clear()");
     }
 }

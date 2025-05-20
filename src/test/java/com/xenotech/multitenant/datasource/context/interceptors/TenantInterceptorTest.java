@@ -53,7 +53,7 @@ class TenantInterceptorTest {
         interceptor.afterCompletion(request, response, handler, null);
 
         // Assert
-        assertThrows(TenantNotFoundException.class, TenantContext::getCurrentTenant);
+        assertNull(TenantContext.getCurrentTenant(), "Expected current tenant to be null after clear()");
     }
 
 }

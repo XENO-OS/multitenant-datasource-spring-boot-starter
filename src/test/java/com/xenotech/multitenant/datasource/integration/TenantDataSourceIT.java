@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
@@ -26,12 +27,15 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(TestDataSourceConfig.class)
 public class TenantDataSourceIT {
     @Autowired
+    @Qualifier("routingDataSource")
     private TenantRoutingDataSource routingDataSource;
 
     @Autowired
+    @Qualifier("tenant1DataSource")
     private DataSource tenant1DataSource;
 
     @Autowired
+    @Qualifier("tenant2DataSource")
     private DataSource tenant2DataSource;
 
     @BeforeEach

@@ -4,8 +4,11 @@ import com.xenotech.multitenant.datasource.context.TenantContext;
 import com.xenotech.multitenant.datasource.exception.TenantNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+import org.springframework.util.StringUtils;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,8 +26,8 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
     public void afterPropertiesSet() {
         // Set the resolved target data sources for the AbstractRoutingDataSource
         super.setTargetDataSources(this.targetDataSources);
-        log.debug("Initializing with datasources: {}", this.targetDataSources.keySet());
         super.afterPropertiesSet();
+        log.debug("Initializing with datasources: {}", this.targetDataSources.keySet());
     }
 
     /**
@@ -34,9 +37,9 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
      */
     @Override
     public void setTargetDataSources(Map<Object, Object> dataSources) {
+        this.targetDataSources.clear();
         this.targetDataSources.putAll(dataSources);
         super.setTargetDataSources(this.targetDataSources);
-        this.afterPropertiesSet();
     }
 
     /**
@@ -51,7 +54,12 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
     protected Object determineCurrentLookupKey() {
         // Retrieve the current tenant identifier from the TenantContext
         // This identifier is used to determine which data source to use
-        return TenantContext.getCurrentTenant();
+        String tenantId = TenantContext.getCurrentTenant();
+        log.debug("Routing to tenant: {}", tenantId);
+        if (!StringUtils.hasText(tenantId)) {
+            throw new TenantNotFoundException("No tenant found in the current context.");
+        }
+        return tenantId;
     }
     /**
      * Adds a new tenant data source to the routing configuration.
@@ -68,6 +76,9 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
      * @throws IllegalArgumentException if either parameter is null
      */
     public void addDataSource(String tenantId, DataSource dataSource) {
+        if (tenantId == null || dataSource == null) {
+            throw new IllegalArgumentException("Tenant ID and DataSource cannot be null");
+        }
         this.targetDataSources.put(tenantId, dataSource);
         super.setTargetDataSources(this.targetDataSources);
         super.afterPropertiesSet();
@@ -86,6 +97,9 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
      * @throws IllegalArgumentException if tenantId is null
      */
     public void removeDataSource(String tenantId) {
+        if (tenantId == null) {
+            throw new IllegalArgumentException("Tenant ID cannot be null");
+        }
         this.targetDataSources.remove(tenantId);
         super.setTargetDataSources(this.targetDataSources);
         super.afterPropertiesSet();
@@ -100,7 +114,7 @@ public class TenantRoutingDataSource extends AbstractRoutingDataSource {
     @Override
     protected DataSource determineTargetDataSource() {
         Object lookupKey = determineCurrentLookupKey();
-        DataSource dataSource = (DataSource) this.targetDataSources.get(lookupKey);
+        DataSource dataSource = (DataSource) super.getResolvedDataSources().get(lookupKey);
 
         if (dataSource == null) {
             throw new TenantNotFoundException(

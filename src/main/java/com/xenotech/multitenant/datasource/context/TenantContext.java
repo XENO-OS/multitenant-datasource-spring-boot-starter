@@ -16,11 +16,7 @@ public class TenantContext {
     }
 
     public static String getCurrentTenant() {
-        String tenant = CURRENT_TENANT.get();
-        if (!StringUtils.hasText(tenant)) {
-            throw new TenantNotFoundException("No tenant found in the current context.");
-        }
-        return tenant;
+        return CURRENT_TENANT.get();
     }
 
     public static void setCurrentTenant(String tenant) {
