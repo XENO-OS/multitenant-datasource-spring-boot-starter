@@ -101,7 +101,7 @@ public class TenantProperties {
          */
         SEND_ERROR,
         /**
-         * Respond 400 with a JSON body {@code {"status": 400, "message": "...", "data": null}}.
+         * Respond 400 with a JSON body {@code {"status": "BAD_REQUEST", "message": "...", "data": null}}.
          */
         ENVELOPE,
         /**
