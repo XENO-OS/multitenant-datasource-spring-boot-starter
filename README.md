@@ -113,7 +113,7 @@ With `multitenancy.fail-fast: true` (the default), startup fails if any tenant's
 `error-response` values:
 
 - `send-error`: `400` through Spring Boot's error handling, like any other `/error` response.
-- `envelope`: `400` with `{"status": 400, "message": "Unknown tenant: zz", "data": null}`.
+- `envelope`: `400` with `{"status": "BAD_REQUEST", "message": "Unknown tenant: zz", "data": null}` (the XENO backend standards §2.4 envelope).
 - `throw`: rethrow the `TenantResolutionException` for an outer filter to handle.
 
 Downstream code that reads the header sees the normalised (lower-case) value, and the resolved tenant is also available as the request attribute `TenantResolutionFilter.TENANT_ATTRIBUTE`.

@@ -22,7 +22,7 @@ class TenantResolutionOptionsTest {
             mvc.perform(get("/tenant").header("X-Tenant-ID", "zz"))
                     .andExpect(status().isBadRequest())
                     .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andExpect(content().json("{\"status\":400,\"message\":\"Unknown tenant: zz\",\"data\":null}"));
+                    .andExpect(content().json("{\"status\":\"BAD_REQUEST\",\"message\":\"Unknown tenant: zz\",\"data\":null}"));
         }
     }
 

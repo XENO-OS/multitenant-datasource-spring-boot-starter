@@ -113,7 +113,7 @@ public class TenantResolutionFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-                response.getWriter().write("{\"status\":400,\"message\":\"" + escapeJson(exception.getMessage()) + "\",\"data\":null}");
+                response.getWriter().write("{\"status\":\"BAD_REQUEST\",\"message\":\"" + escapeJson(exception.getMessage()) + "\",\"data\":null}");
             }
         }
     }
