@@ -9,7 +9,7 @@ plugins {
 }
 
 group = 'com.xenotech'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 
 java {
     toolchain {
@@ -71,13 +71,15 @@ bootJar {
 
 jar {
     enabled = true
+    // Boot plugin defaults the plain jar to the 'plain' classifier; publish it as the main artifact
+    archiveClassifier = ''
 }
 publishing {
     publications {
         mavenJava(MavenPublication) {
             groupId = 'com.xenotech'
             artifactId = 'multitenant-datasource-spring-boot-starter'
-            version = '0.0.1-SNAPSHOT'
+            version = project.version
             from components.java
             versionMapping {
                 usage('java-api') {

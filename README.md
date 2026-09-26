@@ -5,6 +5,12 @@
 
 A lightweight Spring Boot Starter for implementing database-level multi-tenancy with dynamic datasource routing.
 
+## Compatibility
+
+| Starter version | Spring Boot | Java | Branch | Status |
+|-----------------|-------------|------|--------|--------|
+| 1.0.x           | 3.x         | 17+  | `spring-boot-3.x` | End of life — final release, no further updates |
+
 ## Features
 
 - 🚀 **Automatic tenant detection** from HTTP headers
