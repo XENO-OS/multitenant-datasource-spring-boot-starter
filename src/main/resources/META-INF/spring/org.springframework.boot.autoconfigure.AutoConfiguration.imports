@@ -1,1 +1,3 @@
 com.xenotech.multitenant.datasource.autoconfigure.MultitenantDatasourceAutoConfiguration
+com.xenotech.multitenant.datasource.autoconfigure.MultitenantDatasourceWebAutoConfiguration
+com.xenotech.multitenant.datasource.autoconfigure.MultitenantDatasourceHealthAutoConfiguration

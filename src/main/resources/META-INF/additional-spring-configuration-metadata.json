@@ -1,42 +1,10 @@
 {
   "properties": [
-    {
-      "name": "multitenancy.datasources",
-      "type": "java.util.Map<java.lang.String, com.xenotech.multitenant.datasource.autoconfigure.TenantProperties$TenantConfig>",
-      "description": "Map of tenant datasource configurations."
-    },
-    {
-      "name": "multitenancy.datasources.*.url",
-      "type": "java.lang.String",
-      "description": "JDBC URL for the tenant datasource."
-    },
-    {
-      "name": "multitenancy.datasources.*.username",
-      "type": "java.lang.String",
-      "description": "Username for the tenant datasource."
-    },
-    {
-      "name": "multitenancy.datasources.*.password",
-      "type": "java.lang.String",
-      "description": "Password for the tenant datasource."
-    },
-    {
-      "name": "multitenancy.datasources.*.driver-class-name",
-      "type": "java.lang.String",
-      "description": "JDBC driver class name.",
-      "defaultValue": "org.mariadb.jdbc.Driver"
-    },
-    {
-      "name": "multitenancy.datasources.*.maximum-pool-size",
-      "type": "java.lang.Integer",
-      "description": "Maximum connection pool size.",
-      "defaultValue": "30"
-    },
-    {
-      "name": "multitenancy.datasources.*.minimum-idle",
-      "type": "java.lang.Integer",
-      "description": "Minimum idle connections in the pool.",
-      "defaultValue": "5"
-    }
+    {"name": "multitenancy.datasource-defaults.maximum-pool-size", "defaultValue": 10},
+    {"name": "multitenancy.datasource-defaults.minimum-idle", "defaultValue": 0},
+    {"name": "multitenancy.datasource-defaults.connection-timeout", "defaultValue": "3s"},
+    {"name": "multitenancy.datasource-defaults.idle-timeout", "defaultValue": "5m"},
+    {"name": "multitenancy.datasource-defaults.max-lifetime", "defaultValue": "30m"},
+    {"name": "multitenancy.resolution.excluded-paths", "defaultValue": ["/actuator/**"]}
   ]
 }

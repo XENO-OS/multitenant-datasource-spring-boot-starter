@@ -9,11 +9,11 @@ plugins {
 }
 
 group = 'com.xenotech'
-version = '2.0.0'
+version = '3.0.0'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(25)
     }
 }
 
@@ -29,19 +29,29 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor"
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    //
+    // Lombok must run before the configuration processor so the generated metadata sees its accessors
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'com.zaxxer:HikariCP'
-    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
-    //
-    testImplementation 'org.mockito:mockito-core'
+    annotationProcessor 'org.springframework.boot:spring-boot-autoconfigure-processor'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+    api 'org.springframework.boot:spring-boot-starter-jdbc'
+    implementation 'org.springframework.boot:spring-boot-autoconfigure'
+
+    // Optional integrations: each is activated only when the consuming application has it on the classpath
+    compileOnly 'org.springframework.boot:spring-boot-starter-webmvc'
+    compileOnly 'org.springframework.boot:spring-boot-health'
+    compileOnly 'io.micrometer:micrometer-core'
+
+    testCompileOnly 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-actuator'
+    testImplementation 'org.springframework.boot:spring-boot-health'
+    testImplementation 'io.micrometer:micrometer-core'
     testImplementation 'com.h2database:h2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 dependencyManagement {
@@ -52,13 +62,6 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src/main/java']
-        }
-    }
 }
 
 java {

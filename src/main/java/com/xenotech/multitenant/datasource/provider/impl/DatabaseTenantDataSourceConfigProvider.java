@@ -1,10 +1,12 @@
 package com.xenotech.multitenant.datasource.provider.impl;
 
+import com.xenotech.multitenant.datasource.context.TenantContext;
 import com.xenotech.multitenant.datasource.provider.TenantDataSourceConfigProvider;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +36,7 @@ public class DatabaseTenantDataSourceConfigProvider implements TenantDataSourceC
         for (Map<String, Object> row : rows) {
             String tenantId = (String) row.get("tenant_id");
             TenantDataSourceConfig config = mapRowToConfig(row);
-            configs.put(tenantId, config);
+            configs.put(TenantContext.normalize(tenantId), config);
         }
         
         return configs;
@@ -62,12 +64,21 @@ public class DatabaseTenantDataSourceConfigProvider implements TenantDataSourceC
         config.setUsername((String) row.get("username"));
         config.setPassword((String) row.get("password"));
         config.setDriverClassName((String) row.get("driver_class_name"));
-        config.setMaximumPoolSize((Integer) row.get("maximum_pool_size"));
-        config.setMinimumIdle((Integer) row.get("minimum_idle"));
-        config.setConnectionTimeout((Long) row.get("connection_timeout"));
-        config.setIdleTimeout((Long) row.get("idle_timeout"));
-        config.setMaxLifetime((Long) row.get("max_lifetime"));
+        config.setMaximumPoolSize(toInteger(row.get("maximum_pool_size")));
+        config.setMinimumIdle(toInteger(row.get("minimum_idle")));
+        config.setConnectionTimeout(toMillis(row.get("connection_timeout")));
+        config.setIdleTimeout(toMillis(row.get("idle_timeout")));
+        config.setMaxLifetime(toMillis(row.get("max_lifetime")));
         config.setPoolName((String) row.get("pool_name"));
         return config;
+    }
+
+    // Columns may be NULL (fall back to the defaults) and drivers differ in the numeric types they return
+    private static Integer toInteger(Object value) {
+        return value == null ? null : ((Number) value).intValue();
+    }
+
+    private static Duration toMillis(Object value) {
+        return value == null ? null : Duration.ofMillis(((Number) value).longValue());
     }
 }

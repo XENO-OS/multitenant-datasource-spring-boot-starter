@@ -1,122 +1,50 @@
 package com.xenotech.multitenant.datasource.provider;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Map;
 
 /**
- * Interface for providing tenant datasource configurations from various sources.
- * Implementations can retrieve configurations from properties files, databases, etc.
+ * Supplies the datasource configuration for each tenant. The default implementation reads
+ * {@code multitenancy.datasources}; register your own bean to load tenants from elsewhere.
  */
 public interface TenantDataSourceConfigProvider {
-    
+
     /**
-     * Get all tenant configurations.
-     * 
-     * @return Map of tenant IDs to their datasource configurations
+     * @return every tenant's configuration, keyed by tenant identifier (case-insensitive)
      */
     Map<String, TenantDataSourceConfig> getTenantDataSourceConfigs();
-    
+
     /**
-     * Get configuration for a specific tenant.
-     * 
-     * @param tenantId The tenant identifier
-     * @return The datasource configuration for the tenant
+     * @return the tenant's configuration, or {@code null} if the tenant is not known
      */
     TenantDataSourceConfig getTenantDataSourceConfig(String tenantId);
-    
+
     /**
-     * Class representing the configuration needed to create a datasource for a tenant.
+     * Connection details for one tenant. Pool settings left unset fall back to {@code multitenancy.datasource-defaults}.
      */
-    class TenantDataSourceConfig {
+    @Getter
+    @Setter
+    class TenantDataSourceConfig extends PoolSettings {
+        /**
+         * JDBC URL of the tenant's database.
+         */
         private String url;
+
+        /**
+         * Database username.
+         */
         private String username;
+
+        /**
+         * Database password.
+         */
         private String password;
-        private String driverClassName;
-        private int maximumPoolSize = 30;
-        private int minimumIdle = 5;
-        private long connectionTimeout = 3000;
-        private long idleTimeout = 300000;
-        private long maxLifetime = 1800000;
-        private String poolName = "HikariConnPool";
-        
-        // Getters and setters
-        public String getUrl() {
-            return url;
-        }
-        
-        public void setUrl(String url) {
-            this.url = url;
-        }
-        
-        public String getUsername() {
-            return username;
-        }
-        
-        public void setUsername(String username) {
-            this.username = username;
-        }
-        
-        public String getPassword() {
-            return password;
-        }
-        
-        public void setPassword(String password) {
-            this.password = password;
-        }
-        
-        public String getDriverClassName() {
-            return driverClassName;
-        }
-        
-        public void setDriverClassName(String driverClassName) {
-            this.driverClassName = driverClassName;
-        }
-        
-        public int getMaximumPoolSize() {
-            return maximumPoolSize;
-        }
-        
-        public void setMaximumPoolSize(int maximumPoolSize) {
-            this.maximumPoolSize = maximumPoolSize;
-        }
-        
-        public int getMinimumIdle() {
-            return minimumIdle;
-        }
-        
-        public void setMinimumIdle(int minimumIdle) {
-            this.minimumIdle = minimumIdle;
-        }
-        
-        public long getConnectionTimeout() {
-            return connectionTimeout;
-        }
-        
-        public void setConnectionTimeout(long connectionTimeout) {
-            this.connectionTimeout = connectionTimeout;
-        }
-        
-        public long getIdleTimeout() {
-            return idleTimeout;
-        }
-        
-        public void setIdleTimeout(long idleTimeout) {
-            this.idleTimeout = idleTimeout;
-        }
-        
-        public long getMaxLifetime() {
-            return maxLifetime;
-        }
-        
-        public void setMaxLifetime(long maxLifetime) {
-            this.maxLifetime = maxLifetime;
-        }
-        
-        public String getPoolName() {
-            return poolName;
-        }
-        
-        public void setPoolName(String poolName) {
-            this.poolName = poolName;
-        }
+
+        /**
+         * Pool name used in logs and metrics. Defaults to {@code <spring.application.name>-<tenant>}.
+         */
+        private String poolName;
     }
 }
