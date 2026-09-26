@@ -2,14 +2,14 @@ import org.springframework.boot.gradle.plugin.SpringBootPlugin
 plugins {
     id 'java'
     id 'java-library'
-    id 'org.springframework.boot' version '3.4.5'
+    id 'org.springframework.boot' version '4.1.1'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'maven-publish'
     id("signing")
 }
 
 group = 'com.xenotech'
-version = '1.0.0'
+version = '2.0.0'
 
 java {
     toolchain {
@@ -25,24 +25,23 @@ configurations {
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
     mavenLocal()
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     annotationProcessor "org.springframework.boot:spring-boot-autoconfigure-processor"
-    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     //
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation 'com.zaxxer:HikariCP:5.1.0'
+    implementation 'com.zaxxer:HikariCP'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc'
     //
     testImplementation 'org.mockito:mockito-core'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    testImplementation 'com.h2database:h2:2.1.214'
+    testImplementation 'com.h2database:h2'
 }
 
 dependencyManagement {
@@ -92,13 +91,22 @@ publishing {
         }
     }
     repositories {
-        maven {
-            credentials {
-                username = "$mavenU"
-                password = "$mavenP"
+        // repo.myxeno.com fronts /m2 over HTTPS (443): reads are GET, writes are HTTP PUT via nginx WebDAV.
+        // Registered only when mavenU/mavenP creds are present (env or ~/.gradle/gradle.properties),
+        // so publishToMavenLocal works without them.
+        def mavenUser = System.getenv('mavenU') ?: findProperty('mavenU')
+        def mavenPassword = System.getenv('mavenP') ?: findProperty('mavenP')
+        if (mavenUser && mavenPassword) {
+            maven {
+                name = 'myxeno'
+                credentials {
+                    username = mavenUser
+                    password = mavenPassword
+                }
+                url = version.endsWith('SNAPSHOT')
+                        ? 'https://repo.myxeno.com/m2/snapshots'
+                        : 'https://repo.myxeno.com/m2/releases'
             }
-
-            url = version.endsWith('SNAPSHOT') ? "sftp://repo.myxeno.com:22/home/maven/m2repo/snapshots" : "sftp://repo.myxeno.com:22/home/maven/m2repo/releases"
         }
     }
 }

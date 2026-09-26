@@ -9,6 +9,7 @@ A lightweight Spring Boot Starter for implementing database-level multi-tenancy 
 
 | Starter version | Spring Boot | Java | Branch | Status |
 |-----------------|-------------|------|--------|--------|
+| 2.0.x           | 4.x         | 17+  | `main`            | Supported |
 | 1.0.x           | 3.x         | 17+  | `spring-boot-3.x` | End of life — final release, no further updates |
 
 ## Features
@@ -24,14 +25,14 @@ A lightweight Spring Boot Starter for implementing database-level multi-tenancy 
 Add the dependency to your `build.gradle`:
 
 ```groovy
-implementation 'com.xenotech:multitenant-datasource-spring-boot-starter:1.0.0'
+implementation 'com.xenotech:multitenant-datasource-spring-boot-starter:2.0.0'
 ```
 Or for Maven:
 ```xml
 <dependency>
 <groupId>com.xenotech</groupId>
 <artifactId>multitenant-datasource-spring-boot-starter</artifactId>
-<version>1.0.0</version>
+<version>2.0.0</version>
 </dependency>
 ```
 ## Configuration
