@@ -10,7 +10,7 @@ import java.util.Map;
 @Setter
 @ConfigurationProperties(prefix = "multitenancy")
 public class TenantProperties {
-    private Map<String, TenantConfig> datasources;
+    private Map<String, TenantConfig> datasources = new java.util.HashMap<>();
 
     @Getter
     @Setter

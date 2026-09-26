@@ -1,6 +1,6 @@
 package com.xenotech.multitenant.datasource.integration;
 
-import com.xenotech.multitenant.datasource.autoconfigure.TenantProperties;
+import com.xenotech.multitenant.datasource.provider.TenantDataSourceConfigProvider;
 import com.xenotech.multitenant.datasource.provider.TenantDataSourceProvider;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.AfterEach;
@@ -14,42 +14,49 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class TenantDataSourceProviderIT {
     @InjectMocks
     private TenantDataSourceProvider provider;
-    @Mock
-    private TenantProperties tenantProperties;
 
-    private TenantProperties.TenantConfig tenant1Config;
-    private TenantProperties.TenantConfig tenant2Config;
+    @Mock
+    private TenantDataSourceConfigProvider configProvider;
+
+    private TenantDataSourceConfigProvider.TenantDataSourceConfig tenant1Config;
+    private TenantDataSourceConfigProvider.TenantDataSourceConfig tenant2Config;
+    private Map<String, TenantDataSourceConfigProvider.TenantDataSourceConfig> tenantConfigs;
 
     @BeforeEach
     void setUp() {
         // Setup test tenant configurations
-        tenant1Config = new TenantProperties.TenantConfig();
+        tenant1Config = new TenantDataSourceConfigProvider.TenantDataSourceConfig();
         tenant1Config.setUrl("jdbc:h2:mem:tenant1;DB_CLOSE_DELAY=-1;MODE=MySQL");
         tenant1Config.setUsername("sa");
         tenant1Config.setPassword("");
         tenant1Config.setDriverClassName("org.h2.Driver");
 
-        tenant2Config = new TenantProperties.TenantConfig();
+        tenant2Config = new TenantDataSourceConfigProvider.TenantDataSourceConfig();
         tenant2Config.setUrl("jdbc:h2:mem:tenant2;DB_CLOSE_DELAY=-1;MODE=MySQL");
         tenant2Config.setUsername("sa");
         tenant2Config.setPassword("");
         tenant2Config.setDriverClassName("org.h2.Driver");
 
-        // Mock properties to return our test configs
-        when(tenantProperties.getDatasources())
-                .thenReturn(Map.of(
-                        "tenant1", tenant1Config,
-                        "tenant2", tenant2Config
-                ));
+        // Create map of tenant configs
+        tenantConfigs = new HashMap<>();
+        tenantConfigs.put("tenant1", tenant1Config);
+        tenantConfigs.put("tenant2", tenant2Config);
+
+        // Mock config provider to return our test configs
+        when(configProvider.getTenantDataSourceConfigs()).thenReturn(tenantConfigs);
+        lenient().when(configProvider.getTenantDataSourceConfig("tenant1")).thenReturn(tenant1Config);
+        lenient().when(configProvider.getTenantDataSourceConfig("tenant2")).thenReturn(tenant2Config);
 
         provider.initializeTenantDataSources();
     }

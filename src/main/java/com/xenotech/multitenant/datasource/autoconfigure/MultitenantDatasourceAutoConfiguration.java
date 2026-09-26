@@ -3,6 +3,7 @@ package com.xenotech.multitenant.datasource.autoconfigure;
 import com.xenotech.multitenant.datasource.context.interceptors.TenantInterceptor;
 import com.xenotech.multitenant.datasource.config.TenantRoutingDataSource;
 import com.xenotech.multitenant.datasource.provider.TenantDataSourceProvider;
+import com.xenotech.multitenant.datasource.provider.impl.PropertiesTenantDataSourceConfigProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,7 +21,7 @@ import javax.sql.DataSource;
 @AutoConfiguration(after = DataSourceAutoConfiguration.class)
 @ConditionalOnClass({DataSource.class, AbstractRoutingDataSource.class})
 @EnableConfigurationProperties(TenantProperties.class)
-@Import({TenantDataSourceProvider.class})
+@Import({TenantDataSourceProvider.class, PropertiesTenantDataSourceConfigProvider.class})
 public class MultitenantDatasourceAutoConfiguration implements WebMvcConfigurer {
 
     @Bean

@@ -1,11 +1,8 @@
 package com.xenotech.multitenant.datasource.provider;
 
-import com.xenotech.multitenant.datasource.autoconfigure.TenantProperties;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.event.Level;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
@@ -14,21 +11,20 @@ import java.util.Map;
 
 @Slf4j
 @Component
-@EnableConfigurationProperties(TenantProperties.class)
 public class TenantDataSourceProvider {
     private final Map<Object, Object> dataSources = new HashMap<>();
-    private final TenantProperties tenantProperties;
+    private final TenantDataSourceConfigProvider configProvider;
 
-    public TenantDataSourceProvider(TenantProperties tenantProperties) {
-        this.tenantProperties = tenantProperties;
+    public TenantDataSourceProvider(TenantDataSourceConfigProvider configProvider) {
+        this.configProvider = configProvider;
     }
 
     @PostConstruct
     public void initializeTenantDataSources() {
-        tenantProperties.getDatasources().forEach((tenantId, tenantConfig) -> {
+        configProvider.getTenantDataSourceConfigs().forEach((tenantId, config) -> {
             try {
                 log.debug("Initializing data source for tenant: {}", tenantId);
-                dataSources.put(tenantId, createDataSource(tenantConfig));
+                dataSources.put(tenantId, createDataSource(config));
             } catch (Exception e) {
                 log.error("Failed to initialize database for tenant {}", tenantId, e);
             }
@@ -39,7 +35,7 @@ public class TenantDataSourceProvider {
         return dataSources;
     }
 
-    private DataSource createDataSource(TenantProperties.TenantConfig config) {
+    private DataSource createDataSource(TenantDataSourceConfigProvider.TenantDataSourceConfig config) {
         HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(config.getUrl());
         dataSource.setUsername(config.getUsername());
@@ -52,5 +48,18 @@ public class TenantDataSourceProvider {
         dataSource.setMaxLifetime(config.getMaxLifetime());
         dataSource.setPoolName(config.getPoolName());
         return dataSource;
+    }
+
+    /**
+     * Add a new tenant datasource dynamically
+     * 
+     * @param tenantId The tenant identifier
+     */
+    public void addTenantDataSource(String tenantId) {
+        TenantDataSourceConfigProvider.TenantDataSourceConfig config = 
+            configProvider.getTenantDataSourceConfig(tenantId);
+        if (config != null) {
+            dataSources.put(tenantId, createDataSource(config));
+        }
     }
 }

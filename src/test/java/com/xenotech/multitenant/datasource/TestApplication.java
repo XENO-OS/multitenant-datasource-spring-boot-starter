@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 
 @SpringBootConfiguration
-@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class})
+@EnableAutoConfiguration
 @ComponentScan(basePackages = "com.xenotech.multitenant.datasource")
 @Import(TestDataSourceConfig.class)
 public class TestApplication {

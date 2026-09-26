@@ -1,18 +1,12 @@
 package com.xenotech.multitenant.datasource.integration;
 
-import com.xenotech.multitenant.datasource.TestApplication;
-import com.xenotech.multitenant.datasource.TestDataSourceConfig;
 import com.xenotech.multitenant.datasource.config.TenantRoutingDataSource;
 import com.xenotech.multitenant.datasource.context.TenantContext;
 import com.xenotech.multitenant.datasource.exception.TenantNotFoundException;
+import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -22,20 +16,9 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(TestDataSourceConfig.class)
 public class TenantDataSourceIT {
-    @Autowired
-    @Qualifier("routingDataSource")
     private TenantRoutingDataSource routingDataSource;
-
-    @Autowired
-    @Qualifier("tenant1DataSource")
     private DataSource tenant1DataSource;
-
-    @Autowired
-    @Qualifier("tenant2DataSource")
     private DataSource tenant2DataSource;
 
     @BeforeEach
@@ -43,17 +26,39 @@ public class TenantDataSourceIT {
         // Clear any existing tenant context
         TenantContext.clear();
 
-        // Setup our test data sources
+        // Create tenant1 data source
+        HikariDataSource ds1 = new HikariDataSource();
+        ds1.setJdbcUrl("jdbc:h2:mem:tenant1;DB_CLOSE_DELAY=-1;MODE=MySQL");
+        ds1.setUsername("sa");
+        ds1.setPassword("");
+        tenant1DataSource = ds1;
+
+        // Create tenant2 data source
+        HikariDataSource ds2 = new HikariDataSource();
+        ds2.setJdbcUrl("jdbc:h2:mem:tenant2;DB_CLOSE_DELAY=-1;MODE=MySQL");
+        ds2.setUsername("sa");
+        ds2.setPassword("");
+        tenant2DataSource = ds2;
+
+        // Setup our routing data source
+        routingDataSource = new TenantRoutingDataSource();
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put("tenant1", tenant1DataSource);
         targetDataSources.put("tenant2", tenant2DataSource);
-
         routingDataSource.setTargetDataSources(targetDataSources);
         routingDataSource.afterPropertiesSet();
     }
     @AfterEach
     void tearDown() {
         TenantContext.clear();
+
+        // Close the data sources
+        if (tenant1DataSource instanceof HikariDataSource) {
+            ((HikariDataSource) tenant1DataSource).close();
+        }
+        if (tenant2DataSource instanceof HikariDataSource) {
+            ((HikariDataSource) tenant2DataSource).close();
+        }
     }
     @Test
     void shouldRouteToCorrectDataSourceForTenant1() throws SQLException {
