@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.sql.DataSource;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -95,9 +96,9 @@ public class DatabaseTenantDataSourceConfigProviderTest {
         assertEquals(tenant1Row.get("driver_class_name"), config1.getDriverClassName());
         assertEquals(tenant1Row.get("maximum_pool_size"), config1.getMaximumPoolSize());
         assertEquals(tenant1Row.get("minimum_idle"), config1.getMinimumIdle());
-        assertEquals(tenant1Row.get("connection_timeout"), config1.getConnectionTimeout());
-        assertEquals(tenant1Row.get("idle_timeout"), config1.getIdleTimeout());
-        assertEquals(tenant1Row.get("max_lifetime"), config1.getMaxLifetime());
+        assertEquals(Duration.ofMillis((Long) tenant1Row.get("connection_timeout")), config1.getConnectionTimeout());
+        assertEquals(Duration.ofMillis((Long) tenant1Row.get("idle_timeout")), config1.getIdleTimeout());
+        assertEquals(Duration.ofMillis((Long) tenant1Row.get("max_lifetime")), config1.getMaxLifetime());
         assertEquals(tenant1Row.get("pool_name"), config1.getPoolName());
 
         TenantDataSourceConfigProvider.TenantDataSourceConfig config2 = configs.get("tenant2");
@@ -122,9 +123,9 @@ public class DatabaseTenantDataSourceConfigProviderTest {
         assertEquals(tenant1Row.get("driver_class_name"), config.getDriverClassName());
         assertEquals(tenant1Row.get("maximum_pool_size"), config.getMaximumPoolSize());
         assertEquals(tenant1Row.get("minimum_idle"), config.getMinimumIdle());
-        assertEquals(tenant1Row.get("connection_timeout"), config.getConnectionTimeout());
-        assertEquals(tenant1Row.get("idle_timeout"), config.getIdleTimeout());
-        assertEquals(tenant1Row.get("max_lifetime"), config.getMaxLifetime());
+        assertEquals(Duration.ofMillis((Long) tenant1Row.get("connection_timeout")), config.getConnectionTimeout());
+        assertEquals(Duration.ofMillis((Long) tenant1Row.get("idle_timeout")), config.getIdleTimeout());
+        assertEquals(Duration.ofMillis((Long) tenant1Row.get("max_lifetime")), config.getMaxLifetime());
         assertEquals(tenant1Row.get("pool_name"), config.getPoolName());
     }
 
